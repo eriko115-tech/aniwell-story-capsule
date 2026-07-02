@@ -1,0 +1,39 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="201" cy="158" r="148" fill="url(#glow1)" fill-opacity="0.55" />
+  <circle cx="1004" cy="126" r="128" fill="url(#glow2)" fill-opacity="0.35" />
+  <circle cx="760" cy="508" r="196" fill="url(#glow3)" fill-opacity="0.2" />
+  <rect x="444" y="86" width="312" height="458" rx="156" fill="url(#capsule)" stroke="#FFFFFF" stroke-opacity="0.45" />
+  <rect x="468" y="110" width="264" height="410" rx="132" fill="url(#core)" />
+  <text x="122" y="214" fill="#F5DDA4" font-family="Georgia, serif" font-size="26" letter-spacing="6">ANIME STORY CAPSULE</text>
+  <text x="122" y="312" fill="#F7F8FF" font-family="Georgia, serif" font-size="74">Share the anime story</text>
+  <text x="122" y="388" fill="#F7F8FF" font-family="Georgia, serif" font-size="74">that stayed with you.</text>
+  <text x="122" y="458" fill="#C5CAE7" font-family="Arial, sans-serif" font-size="28">A gentle, mobile-first landing page by Aniwell.</text>
+  <defs>
+    <linearGradient id="bg" x1="600" y1="0" x2="600" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D1031" />
+      <stop offset="1" stop-color="#060712" />
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(201 158) rotate(90) scale(148)">
+      <stop stop-color="#AF95FF" />
+      <stop offset="1" stop-color="#AF95FF" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1004 126) rotate(90) scale(128)">
+      <stop stop-color="#7FD5FF" />
+      <stop offset="1" stop-color="#7FD5FF" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(760 508) rotate(90) scale(196)">
+      <stop stop-color="#F4DCA0" />
+      <stop offset="1" stop-color="#F4DCA0" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="capsule" x1="600" y1="86" x2="600" y2="544" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F1FF" stop-opacity="0.3" />
+      <stop offset="1" stop-color="#90CBFF" stop-opacity="0.12" />
+    </linearGradient>
+    <linearGradient id="core" x1="468" y1="110" x2="732" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBF3FF" stop-opacity="0.24" />
+      <stop offset="0.58" stop-color="#8ED7FF" stop-opacity="0.12" />
+      <stop offset="1" stop-color="#DAB0FF" stop-opacity="0.16" />
+    </linearGradient>
+  </defs>
+</svg>
