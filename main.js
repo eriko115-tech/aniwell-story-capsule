@@ -2,75 +2,63 @@ const sampleCapsules = [
   {
     id: 1,
     title: "Naruto",
+    genre: "Anime",
     feeling: "Less alone",
     memory:
       "When Naruto kept trying even when everyone rejected him, I felt like maybe I could keep going too.",
-    hearts: 128,
-    stars: 73,
     variant: "variant-blue",
     detail: "orb",
   },
   {
     id: 2,
     title: "Attack on Titan",
+    genre: "Manga",
     feeling: "Brave",
     memory: "Eren's determination made me face my own fears.",
-    hearts: 112,
-    stars: 59,
     variant: "variant-amber",
     detail: "orb",
   },
   {
     id: 3,
     title: "Clannad",
+    genre: "Anime",
     feeling: "Comforted",
     memory: "This story broke me and healed me at the same time.",
-    hearts: 98,
-    stars: 64,
     variant: "variant-violet",
     detail: "orb",
   },
   {
     id: 4,
     title: "A Silent Voice",
+    genre: "Manga",
     feeling: "Understood",
     memory: "Shoya's journey made me feel less alone in my regrets.",
-    hearts: 146,
-    stars: 81,
     variant: "variant-violet",
     detail: "paper",
   },
   {
     id: 5,
-    title: "Violet Evergarden",
+    title: "Sparkle",
+    genre: "Music",
     feeling: "Hopeful",
-    memory: "She taught me that it's okay to keep searching for the right words.",
-    hearts: 123,
-    stars: 77,
+    memory:
+      "The song made me feel like even fleeting moments can stay bright inside you for a long time.",
     variant: "variant-garden",
     detail: "seedling",
   },
   {
     id: 6,
-    title: "Final Fantasy X",
+    title: "Again",
+    genre: "Music",
     feeling: "Ready to keep going",
-    memory: "Tidus showed me that it's okay to cry, even if you're still walking forward.",
-    hearts: 131,
-    stars: 85,
+    memory:
+      "Hearing it after a hard season reminded me that starting over can still be full of courage.",
     variant: "variant-wheel",
     detail: "wheel",
   },
 ];
 
-const filters = [
-  "All",
-  "Less alone",
-  "Brave",
-  "Comforted",
-  "Understood",
-  "Hopeful",
-  "Ready to keep going",
-];
+const filters = ["All", "Anime", "Manga", "Music"];
 
 const filterBar = document.querySelector("#filter-bar");
 const galleryGrid = document.querySelector("#gallery-grid");
@@ -144,7 +132,7 @@ function renderGallery() {
   const visibleCapsules =
     activeFilter === "All"
       ? sampleCapsules
-      : sampleCapsules.filter((capsule) => capsule.feeling === activeFilter);
+      : sampleCapsules.filter((capsule) => capsule.genre === activeFilter);
 
   galleryGrid.innerHTML = "";
 
@@ -154,13 +142,9 @@ function renderGallery() {
     article.innerHTML = `
       ${buildCapsuleThumb(capsule)}
       <div class="capsule-meta">
-        <span class="feel-tag">${capsule.feeling}</span>
+        <span class="feel-tag">${capsule.genre}</span>
         <h3>${capsule.title}</h3>
         <p>"${capsule.memory}"</p>
-        <div class="stats-row">
-          <span>♡ ${capsule.hearts}</span>
-          <span>✧ ${capsule.stars}</span>
-        </div>
       </div>
     `;
     galleryGrid.appendChild(article);

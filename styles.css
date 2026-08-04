@@ -808,13 +808,6 @@ p {
   margin-bottom: 12px;
 }
 
-.stats-row {
-  display: flex;
-  gap: 16px;
-  color: var(--gold);
-  font-size: 0.92rem;
-}
-
 .load-more {
   display: block;
   width: 100%;
