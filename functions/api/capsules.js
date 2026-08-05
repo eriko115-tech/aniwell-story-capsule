@@ -15,6 +15,8 @@ const allowedFeelings = new Set([
   "Other",
 ]);
 
+const allowedMediaTypes = new Set(["Anime", "Manga", "Game", "Music"]);
+
 export async function onRequestOptions() {
   return new Response(null, {
     status: 204,
@@ -38,16 +40,35 @@ export async function onRequestGet(context) {
       );
     }
 
-    const { results } = await db
-      .prepare(
-        `SELECT id, created_at, title, memory, feelings, country_code, country_name, heart_reactions, star_reactions
+    let results;
+
+    try {
+      ({ results } = await db
+        .prepare(
+          `SELECT id, created_at, title, media_type, memory, feelings, country_code, country_name, heart_reactions, star_reactions
           FROM story_submissions
           WHERE share_anonymously = 1
             AND status != 'rejected'
           ORDER BY created_at DESC
           LIMIT 80`,
-      )
-      .all();
+        )
+        .all());
+    } catch (error) {
+      if (!isMissingMediaTypeColumn(error)) {
+        throw error;
+      }
+
+      ({ results } = await db
+        .prepare(
+          `SELECT id, created_at, title, memory, feelings, country_code, country_name, heart_reactions, star_reactions
+          FROM story_submissions
+          WHERE share_anonymously = 1
+            AND status != 'rejected'
+          ORDER BY created_at DESC
+          LIMIT 80`,
+        )
+        .all());
+    }
 
     return Response.json(
       {
@@ -77,6 +98,7 @@ function toPublicCapsule(row, index) {
     title: cleanPublicText(row.title, 90),
     memory: cleanPublicText(row.memory, 420),
     feeling,
+    mediaType: parseMediaType(row.media_type),
     motif: "",
     caption: "",
     hearts: 36 + ((stableNumber + index * 17) % 118) + Number(row.heart_reactions || 0),
@@ -85,6 +107,18 @@ function toPublicCapsule(row, index) {
     countryName: row.country_name || "Unknown",
     createdAt: row.created_at,
   };
+}
+
+function parseMediaType(value) {
+  const mediaType = String(value || "").trim();
+
+  return allowedMediaTypes.has(mediaType) ? mediaType : "";
+}
+
+function isMissingMediaTypeColumn(error) {
+  return /media_type|no such column/i.test(
+    error instanceof Error ? error.message : String(error),
+  );
 }
 
 function parseFeelings(value) {

@@ -13,6 +13,8 @@ const allowedFeelings = new Set([
   "Other",
 ]);
 
+const allowedMediaTypes = new Set(["Anime", "Manga", "Game", "Music"]);
+
 export async function onRequestOptions() {
   return new Response(null, {
     status: 204,
@@ -48,9 +50,53 @@ export async function onRequestPost(context) {
     const createdAt = new Date().toISOString();
     const country = getRequestCountry(context.request);
 
-    await db
-      .prepare(
-        `INSERT INTO story_submissions (
+    try {
+      await db
+        .prepare(
+          `INSERT INTO story_submissions (
+          id,
+          created_at,
+          email,
+          title,
+          media_type,
+          memory,
+          name,
+          social,
+          feelings,
+          consent,
+          share_anonymously,
+          country_code,
+          country_name,
+          status,
+          user_agent
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .bind(
+          id,
+          createdAt,
+          value.email,
+          value.title,
+          value.mediaType,
+          value.memory,
+          value.name,
+          value.social,
+          JSON.stringify(value.feelings),
+          value.consent,
+          value.consent === "yes" ? 1 : 0,
+          country.code,
+          country.name,
+          "pending",
+          context.request.headers.get("user-agent") ?? "",
+        )
+        .run();
+    } catch (error) {
+      if (!isMissingMediaTypeColumn(error)) {
+        throw error;
+      }
+
+      await db
+        .prepare(
+          `INSERT INTO story_submissions (
           id,
           created_at,
           email,
@@ -66,24 +112,25 @@ export async function onRequestPost(context) {
           status,
           user_agent
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      )
-      .bind(
-        id,
-        createdAt,
-        value.email,
-        value.title,
-        value.memory,
-        value.name,
-        value.social,
-        JSON.stringify(value.feelings),
-        value.consent,
-        value.consent === "yes" ? 1 : 0,
-        country.code,
-        country.name,
-        "pending",
-        context.request.headers.get("user-agent") ?? "",
-      )
-      .run();
+        )
+        .bind(
+          id,
+          createdAt,
+          value.email,
+          value.title,
+          value.memory,
+          value.name,
+          value.social,
+          JSON.stringify(value.feelings),
+          value.consent,
+          value.consent === "yes" ? 1 : 0,
+          country.code,
+          country.name,
+          "pending",
+          context.request.headers.get("user-agent") ?? "",
+        )
+        .run();
+    }
 
     const emailResult = await sendNotificationEmail(context.env, {
       id,
@@ -112,6 +159,7 @@ export async function onRequestPost(context) {
 function normalizeSubmission(payload) {
   const email = clean(payload.email);
   const title = clean(payload.title);
+  const mediaType = clean(payload.mediaType);
   const memory = clean(payload.memory);
   const name = clean(payload.name);
   const social = clean(payload.social);
@@ -141,6 +189,7 @@ function normalizeSubmission(payload) {
     value: {
       email,
       title,
+      mediaType: allowedMediaTypes.has(mediaType) ? mediaType : "",
       memory,
       name,
       social,
@@ -148,6 +197,12 @@ function normalizeSubmission(payload) {
       consent,
     },
   };
+}
+
+function isMissingMediaTypeColumn(error) {
+  return /media_type|no such column|has no column/i.test(
+    error instanceof Error ? error.message : String(error),
+  );
 }
 
 function clean(value) {
@@ -198,6 +253,7 @@ function renderEmailHtml(submission) {
     <p><strong>Name:</strong> ${escapeHtml(submission.name || "Not provided")}</p>
     <p><strong>Social:</strong> ${escapeHtml(submission.social || "Not provided")}</p>
     <p><strong>Story title:</strong> ${escapeHtml(submission.title)}</p>
+    <p><strong>Story type:</strong> ${escapeHtml(submission.mediaType || "Not selected")}</p>
     <p><strong>Feelings:</strong> ${escapeHtml(submission.feelings.join(", ") || "Not selected")}</p>
     <p><strong>Country:</strong> ${escapeHtml(submission.country?.name || "Unknown")} (${escapeHtml(submission.country?.code || "XX")})</p>
     <p><strong>Anonymous sharing consent:</strong> ${escapeHtml(submission.consent)}</p>
@@ -215,6 +271,7 @@ function renderEmailText(submission) {
     `Name: ${submission.name || "Not provided"}`,
     `Social: ${submission.social || "Not provided"}`,
     `Story title: ${submission.title}`,
+    `Story type: ${submission.mediaType || "Not selected"}`,
     `Feelings: ${submission.feelings.join(", ") || "Not selected"}`,
     `Country: ${submission.country?.name || "Unknown"} (${submission.country?.code || "XX"})`,
     `Anonymous sharing consent: ${submission.consent}`,

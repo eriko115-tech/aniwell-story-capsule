@@ -15,6 +15,7 @@ type Capsule = {
   id: number | string;
   title: string;
   feeling: Feeling;
+  mediaType?: MediaType;
   motif: string;
   caption: string;
   memory: string;
@@ -22,6 +23,7 @@ type Capsule = {
   stars: number;
 };
 
+type MediaType = "Anime" | "Manga" | "Game" | "Music";
 type Route = "home" | "capsules";
 type Reaction = "heart";
 
@@ -36,6 +38,8 @@ const feelings: Feeling[] = [
   "Other",
 ];
 
+const mediaTypes: MediaType[] = ["Anime", "Manga", "Game", "Music"];
+
 const productionOrigin = "https://capsule.aniwell.net";
 
 function apiUrl(path: string) {
@@ -44,11 +48,40 @@ function apiUrl(path: string) {
     : path;
 }
 
+function normalizeMediaType(value: unknown): MediaType | undefined {
+  const cleaned = String(value ?? "").trim();
+
+  return mediaTypes.includes(cleaned as MediaType) ? (cleaned as MediaType) : undefined;
+}
+
+function getCapsuleMediaType(capsule: Capsule): MediaType {
+  if (capsule.mediaType) {
+    return capsule.mediaType;
+  }
+
+  const text = `${capsule.title} ${capsule.memory}`.toLowerCase();
+
+  if (/\b(game|final fantasy|persona|zelda|pokemon|pokémon|kingdom hearts|nier|undertale)\b/.test(text)) {
+    return "Game";
+  }
+
+  if (/\b(song|music|band|album|lyrics|vocaloid|utaite|soundtrack|ost|theme)\b/.test(text)) {
+    return "Music";
+  }
+
+  if (/\b(manga|comic|manhwa|webtoon|chapter)\b/.test(text)) {
+    return "Manga";
+  }
+
+  return "Anime";
+}
+
 const sampleCapsules: Capsule[] = [
   {
     id: 1,
     title: "Naruto",
     feeling: "Less alone",
+    mediaType: "Anime",
     motif: "lantern",
     caption: "A small light in the dark.",
     memory:
@@ -60,6 +93,7 @@ const sampleCapsules: Capsule[] = [
     id: 2,
     title: "A Silent Voice",
     feeling: "Seen / Understood",
+    mediaType: "Manga",
     motif: "letter",
     caption: "A note that gave your feeling a name.",
     memory: "Shoya's journey made me feel less alone in my regrets.",
@@ -70,6 +104,7 @@ const sampleCapsules: Capsule[] = [
     id: 3,
     title: "Clannad",
     feeling: "Comforted",
+    mediaType: "Anime",
     motif: "moon",
     caption: "A moonlit place to rest.",
     memory: "This story broke me and healed me at the same time.",
@@ -80,6 +115,7 @@ const sampleCapsules: Capsule[] = [
     id: 4,
     title: "Violet Evergarden",
     feeling: "Hopeful",
+    mediaType: "Anime",
     motif: "dawn",
     caption: "A small dawn after a long night.",
     memory:
@@ -91,6 +127,7 @@ const sampleCapsules: Capsule[] = [
     id: 5,
     title: "Attack on Titan",
     feeling: "Brave",
+    mediaType: "Manga",
     motif: "flame",
     caption: "A spark that helped you step forward.",
     memory: "Eren's determination made me face my own fears.",
@@ -101,6 +138,7 @@ const sampleCapsules: Capsule[] = [
     id: 6,
     title: "Final Fantasy X",
     feeling: "Inspired",
+    mediaType: "Game",
     motif: "music",
     caption: "A melody that woke something inside.",
     memory: "The music helped me feel something I could not put into words.",
@@ -111,6 +149,7 @@ const sampleCapsules: Capsule[] = [
     id: 7,
     title: "Fullmetal Alchemist",
     feeling: "Ready to keep going",
+    mediaType: "Manga",
     motif: "compass",
     caption: "A path that reminded you to continue.",
     memory:
@@ -122,6 +161,7 @@ const sampleCapsules: Capsule[] = [
     id: 8,
     title: "Unknown",
     feeling: "Other",
+    mediaType: "Music",
     motif: "prism",
     caption: "A feeling that does not need a name yet.",
     memory:
@@ -289,10 +329,7 @@ function Header({ onNavigate }: { onNavigate: (route: Route, hash?: string) => v
   return (
     <header className="header">
       <button className="brand" type="button" onClick={() => onNavigate("home")}>
-        <span className="brand-mark" aria-hidden="true">
-          <span />
-        </span>
-        <span>Aniwell</span>
+        <img className="brand-logo" src="/assets/aniwell-logo.png" alt="Aniwell" />
       </button>
       <button
         className="menu-button"
@@ -406,6 +443,7 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
     const form = new FormData(formElement);
     const email = String(form.get("email") ?? "").trim();
     const title = String(form.get("title") ?? "").trim();
+    const mediaType = normalizeMediaType(form.get("mediaType"));
     const memory = String(form.get("memory") ?? "").trim();
     const name = String(form.get("name") ?? "").trim();
     const social = String(form.get("social") ?? "").trim();
@@ -429,6 +467,7 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
         body: JSON.stringify({
           email,
           title,
+          mediaType,
           memory,
           name,
           social,
@@ -489,6 +528,20 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
                   placeholder="Anime, manga, game, song, character, scene, or quote"
                 />
               </Field>
+              <fieldset>
+                <legend>
+                  Story Type
+                  <span>Choose the closest category.</span>
+                </legend>
+                <div className="radio-card compact-options">
+                  {mediaTypes.map((mediaType) => (
+                    <label key={mediaType} className="choice-row">
+                      <input name="mediaType" type="radio" value={mediaType} />
+                      <span>{mediaType}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <Field label="What moment stayed with you?" required>
                 <textarea
                   name="memory"
@@ -574,6 +627,7 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
 
 function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string) => void }) {
   const [filter, setFilter] = useState<Feeling | "All">("All");
+  const [mediaFilter, setMediaFilter] = useState<MediaType | "All">("All");
   const [communityCapsules, setCommunityCapsules] = useState<Capsule[]>([]);
   const [sampleReactionCounts, setSampleReactionCounts] = useState<
     Record<string, Partial<Record<Reaction, number>>>
@@ -647,10 +701,13 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
   );
   const capsules = useMemo(
     () =>
-      filter === "All"
-        ? allCapsules
-        : allCapsules.filter((capsule) => capsule.feeling === filter),
-    [allCapsules, filter],
+      allCapsules.filter((capsule) => {
+        const feelingMatches = filter === "All" || capsule.feeling === filter;
+        const mediaMatches = mediaFilter === "All" || getCapsuleMediaType(capsule) === mediaFilter;
+
+        return feelingMatches && mediaMatches;
+      }),
+    [allCapsules, filter, mediaFilter],
   );
 
   return (
@@ -667,17 +724,35 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
       </section>
 
       <section className="section gallery-list-section">
-        <div className="filter-chips" aria-label="Filter capsules">
-          {(["All", ...feelings] as const).map((chip) => (
-            <button
-              key={chip}
-              type="button"
-              className={filter === chip ? "chip active" : "chip"}
-              onClick={() => setFilter(chip)}
-            >
-              {chip}
-            </button>
-          ))}
+        <div className="filter-group">
+          <p>Story type</p>
+          <div className="filter-chips" aria-label="Filter capsules by story type">
+            {(["All", ...mediaTypes] as const).map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                className={mediaFilter === chip ? "chip active" : "chip"}
+                onClick={() => setMediaFilter(chip)}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="filter-group">
+          <p>Feeling</p>
+          <div className="filter-chips" aria-label="Filter capsules by feeling">
+            {(["All", ...feelings] as const).map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                className={filter === chip ? "chip active" : "chip"}
+                onClick={() => setFilter(chip)}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
         </div>
         {loading ? <p className="gallery-status">Loading community capsules...</p> : null}
         {loadError ? (
@@ -703,6 +778,9 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
             />
           ))}
         </div>
+        {!loading && capsules.length === 0 ? (
+          <p className="gallery-status">No capsules match these filters yet.</p>
+        ) : null}
         <div className="bottom-cta">
           <button className="primary-button" type="button" onClick={() => onNavigate("home", "#story-form")}>
             Add Your Story to the Capsule
@@ -724,14 +802,18 @@ function CapsuleCard({
 }) {
   const heartKey = getReactionKey(capsule.id, "heart");
   const heartReacted = reactedKeys.has(heartKey);
+  const mediaType = getCapsuleMediaType(capsule);
 
   return (
     <article className="capsule-card">
       <CrystalCapsule feeling={capsule.feeling} size="card" />
       <div>
-        <span className={`feeling-tag ${feelingMeta[capsule.feeling].className}`}>
-          {capsule.feeling}
-        </span>
+        <div className="tag-row">
+          <span className="media-tag">{mediaType}</span>
+          <span className={`feeling-tag ${feelingMeta[capsule.feeling].className}`}>
+            {capsule.feeling}
+          </span>
+        </div>
         <h3>{capsule.title}</h3>
         <p>&quot;{capsule.memory}&quot;</p>
         <div className="metrics" aria-label="Capsule reactions">
@@ -1051,10 +1133,7 @@ function Footer() {
     <footer className="footer">
       <div>
         <div className="brand footer-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <span />
-          </span>
-          <span>Aniwell</span>
+          <img className="brand-logo" src="/assets/aniwell-logo.png" alt="Aniwell" />
         </div>
         <p>
           Aniwell is building a world where anime, music, and characters support

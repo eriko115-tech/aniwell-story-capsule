@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS story_submissions (
   created_at TEXT NOT NULL,
   email TEXT NOT NULL,
   title TEXT NOT NULL,
+  media_type TEXT,
   memory TEXT NOT NULL,
   name TEXT,
   social TEXT,

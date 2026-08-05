@@ -122,6 +122,13 @@ main,
   cursor: pointer;
 }
 
+.brand-logo {
+  display: block;
+  width: 132px;
+  height: auto;
+  object-fit: contain;
+}
+
 .brand-mark {
   position: relative;
   display: grid;
@@ -471,6 +478,10 @@ legend span {
   border: 1px solid rgba(200, 196, 216, 0.2);
   border-radius: 8px;
   background: rgba(9, 16, 38, 0.66);
+}
+
+.compact-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .choice-row {
@@ -824,7 +835,20 @@ legend span {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.filter-group {
+  display: grid;
+  gap: 8px;
   margin-bottom: 18px;
+}
+
+.filter-group p {
+  margin: 0;
+  color: var(--pale-gold);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .gallery-status {
@@ -884,13 +908,31 @@ legend span {
 .feeling-tag {
   display: inline-flex;
   max-width: 100%;
-  margin-bottom: 8px;
   padding: 5px 10px;
   border-radius: 6px;
   color: #fff;
   background: rgba(117, 92, 205, 0.76);
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.media-tag {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 5px 10px;
+  border: 1px solid rgba(142, 203, 255, 0.3);
+  border-radius: 6px;
+  color: #d7efff;
+  background: rgba(34, 123, 174, 0.38);
+  font-size: 0.72rem;
+  font-weight: 800;
 }
 
 .feeling-tag.less-alone,
