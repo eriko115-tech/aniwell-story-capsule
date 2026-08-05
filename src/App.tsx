@@ -555,7 +555,7 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
                 <input
                   name="social"
                   type="text"
-                  placeholder="Instagram, X, LinkedIn, YouTube, or any handle you'd like to share"
+                  placeholder="Instagram, X, or any handle you'd like to share"
                 />
               </Field>
               <fieldset>
@@ -881,14 +881,6 @@ function FollowAniwell() {
     {
       label: "X",
       href: "https://x.com/PantoFrancesco",
-    },
-    {
-      label: "YouTube",
-      href: "https://www.youtube.com/@PantoFrancesco",
-    },
-    {
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/in/fpanto",
     },
   ];
 
