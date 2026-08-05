@@ -945,43 +945,6 @@ legend span {
   background: rgba(82, 95, 111, 0.82);
 }
 
-.metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-  color: var(--pale-gold);
-  font-size: 0.88rem;
-}
-
-.reaction-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 6px 10px;
-  border: 1px solid rgba(217, 179, 108, 0.24);
-  border-radius: 999px;
-  color: var(--pale-gold);
-  background: rgba(4, 9, 22, 0.42);
-  cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-}
-
-.reaction-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(240, 217, 162, 0.58);
-  background: rgba(217, 179, 108, 0.12);
-}
-
-.reaction-button.reacted,
-.reaction-button:disabled {
-  color: #fff;
-  border-color: rgba(255, 195, 223, 0.48);
-  background: rgba(185, 167, 255, 0.18);
-  cursor: default;
-}
-
 .bottom-cta {
   display: grid;
   margin-top: 18px;

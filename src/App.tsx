@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Dispatch, FormEvent, ReactNode, SetStateAction } from "react";
+import type { FormEvent, ReactNode } from "react";
 
 type Feeling =
   | "Less alone"
@@ -25,7 +25,6 @@ type Capsule = {
 
 type MediaType = "Anime" | "Manga" | "Game" | "Music";
 type Route = "home" | "capsules";
-type Reaction = "heart";
 
 const feelings: Feeling[] = [
   "Less alone",
@@ -629,10 +628,6 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
   const [filter, setFilter] = useState<Feeling | "All">("All");
   const [mediaFilter, setMediaFilter] = useState<MediaType | "All">("All");
   const [communityCapsules, setCommunityCapsules] = useState<Capsule[]>([]);
-  const [sampleReactionCounts, setSampleReactionCounts] = useState<
-    Record<string, Partial<Record<Reaction, number>>>
-  >({});
-  const [reactedKeys, setReactedKeys] = useState<Set<string>>(() => readReactedKeys());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
@@ -685,20 +680,7 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
     };
   }, []);
 
-  const allCapsules = useMemo(
-    () => [
-      ...communityCapsules,
-      ...sampleCapsules.map((capsule) => {
-        const counts = sampleReactionCounts[String(capsule.id)] ?? {};
-
-        return {
-          ...capsule,
-          hearts: capsule.hearts + (counts.heart ?? 0),
-        };
-      }),
-    ],
-    [communityCapsules, sampleReactionCounts],
-  );
+  const allCapsules = useMemo(() => [...communityCapsules, ...sampleCapsules], [communityCapsules]);
   const capsules = useMemo(
     () =>
       allCapsules.filter((capsule) => {
@@ -768,14 +750,7 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
         ) : null}
         <div className="capsule-list">
           {capsules.map((capsule) => (
-            <CapsuleCard
-              key={capsule.id}
-              capsule={capsule}
-              reactedKeys={reactedKeys}
-              onReact={(reaction) => {
-                handleReaction(capsule, reaction, setCommunityCapsules, setSampleReactionCounts, setReactedKeys);
-              }}
-            />
+            <CapsuleCard key={capsule.id} capsule={capsule} />
           ))}
         </div>
         {!loading && capsules.length === 0 ? (
@@ -793,15 +768,9 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
 
 function CapsuleCard({
   capsule,
-  reactedKeys,
-  onReact,
 }: {
   capsule: Capsule;
-  reactedKeys: Set<string>;
-  onReact: (reaction: Reaction) => void;
 }) {
-  const heartKey = getReactionKey(capsule.id, "heart");
-  const heartReacted = reactedKeys.has(heartKey);
   const mediaType = getCapsuleMediaType(capsule);
 
   return (
@@ -816,107 +785,9 @@ function CapsuleCard({
         </div>
         <h3>{capsule.title}</h3>
         <p>&quot;{capsule.memory}&quot;</p>
-        <div className="metrics" aria-label="Capsule reactions">
-          <button
-            className={heartReacted ? "reaction-button reacted" : "reaction-button"}
-            type="button"
-            aria-label={`${capsule.hearts} hearts`}
-            aria-pressed={heartReacted}
-            disabled={heartReacted}
-            onClick={() => onReact("heart")}
-          >
-            <span aria-hidden="true">&#9829;</span> Like {capsule.hearts}
-          </button>
-        </div>
       </div>
     </article>
   );
-}
-
-function handleReaction(
-  capsule: Capsule,
-  reaction: Reaction,
-  setCommunityCapsules: Dispatch<SetStateAction<Capsule[]>>,
-  setSampleReactionCounts: Dispatch<
-    SetStateAction<Record<string, Partial<Record<Reaction, number>>>>
-  >,
-  setReactedKeys: Dispatch<SetStateAction<Set<string>>>,
-) {
-  const key = getReactionKey(capsule.id, reaction);
-
-  if (localStorage.getItem(key)) {
-    setReactedKeys(readReactedKeys());
-    return;
-  }
-
-  localStorage.setItem(key, "1");
-  setReactedKeys(readReactedKeys());
-
-  const metric = "hearts";
-
-  if (typeof capsule.id === "string") {
-    setCommunityCapsules((current) =>
-      current.map((item) =>
-        item.id === capsule.id ? { ...item, [metric]: item[metric] + 1 } : item,
-      ),
-    );
-
-    fetch(apiUrl("/api/react"), {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        id: capsule.id,
-        reaction,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Reaction was not saved.");
-        }
-      })
-      .catch(() => {
-      setCommunityCapsules((current) =>
-        current.map((item) =>
-          item.id === capsule.id ? { ...item, [metric]: Math.max(0, item[metric] - 1) } : item,
-        ),
-      );
-      localStorage.removeItem(key);
-      setReactedKeys(readReactedKeys());
-    });
-    return;
-  }
-
-  setSampleReactionCounts((current) => ({
-    ...current,
-    [String(capsule.id)]: {
-      ...current[String(capsule.id)],
-      [reaction]: (current[String(capsule.id)]?.[reaction] ?? 0) + 1,
-    },
-  }));
-}
-
-function getReactionKey(id: Capsule["id"], reaction: Reaction) {
-  return `aniwell-reaction:${id}:${reaction}`;
-}
-
-function readReactedKeys() {
-  if (typeof localStorage === "undefined") {
-    return new Set<string>();
-  }
-
-  const keys = new Set<string>();
-
-  for (let index = 0; index < localStorage.length; index += 1) {
-    const key = localStorage.key(index);
-
-    if (key?.startsWith("aniwell-reaction:")) {
-      keys.add(key);
-    }
-  }
-
-  return keys;
 }
 
 function GalleryTeaser({ onNavigate }: { onNavigate: (route: Route) => void }) {
