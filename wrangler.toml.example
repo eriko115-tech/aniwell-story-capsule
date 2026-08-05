@@ -1,0 +1,10 @@
+name = "aniwell-story-capsule"
+compatibility_date = "2026-07-05"
+pages_build_output_dir = "dist"
+
+# Copy this file to wrangler.toml and replace the database_id.
+# The binding name must stay DB unless functions/api/submit.js is changed.
+[[d1_databases]]
+binding = "DB"
+database_name = "aniwell-story-capsule"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
