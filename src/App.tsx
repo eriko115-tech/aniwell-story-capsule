@@ -75,101 +75,6 @@ function getCapsuleMediaType(capsule: Capsule): MediaType {
   return "Anime";
 }
 
-const sampleCapsules: Capsule[] = [
-  {
-    id: 1,
-    title: "Naruto",
-    feeling: "Less alone",
-    mediaType: "Anime",
-    motif: "lantern",
-    caption: "A small light in the dark.",
-    memory:
-      "When Naruto kept trying even when everyone rejected him, I felt like maybe I could keep going too.",
-    hearts: 128,
-    stars: 73,
-  },
-  {
-    id: 2,
-    title: "A Silent Voice",
-    feeling: "Seen / Understood",
-    mediaType: "Manga",
-    motif: "letter",
-    caption: "A note that gave your feeling a name.",
-    memory: "Shoya's journey made me feel less alone in my regrets.",
-    hearts: 146,
-    stars: 81,
-  },
-  {
-    id: 3,
-    title: "Clannad",
-    feeling: "Comforted",
-    mediaType: "Anime",
-    motif: "moon",
-    caption: "A moonlit place to rest.",
-    memory: "This story broke me and healed me at the same time.",
-    hearts: 98,
-    stars: 64,
-  },
-  {
-    id: 4,
-    title: "Violet Evergarden",
-    feeling: "Hopeful",
-    mediaType: "Anime",
-    motif: "dawn",
-    caption: "A small dawn after a long night.",
-    memory:
-      "She taught me that it's okay to keep searching for the right words.",
-    hearts: 123,
-    stars: 77,
-  },
-  {
-    id: 5,
-    title: "Attack on Titan",
-    feeling: "Brave",
-    mediaType: "Manga",
-    motif: "flame",
-    caption: "A spark that helped you step forward.",
-    memory: "Eren's determination made me face my own fears.",
-    hearts: 112,
-    stars: 59,
-  },
-  {
-    id: 6,
-    title: "Final Fantasy X",
-    feeling: "Inspired",
-    mediaType: "Game",
-    motif: "music",
-    caption: "A melody that woke something inside.",
-    memory: "The music helped me feel something I could not put into words.",
-    hearts: 131,
-    stars: 85,
-  },
-  {
-    id: 7,
-    title: "Fullmetal Alchemist",
-    feeling: "Ready to keep going",
-    mediaType: "Manga",
-    motif: "compass",
-    caption: "A path that reminded you to continue.",
-    memory:
-      "It reminded me that even after losing something, you can still walk forward.",
-    hearts: 120,
-    stars: 70,
-  },
-  {
-    id: 8,
-    title: "Unknown",
-    feeling: "Other",
-    mediaType: "Music",
-    motif: "prism",
-    caption: "A feeling that does not need a name yet.",
-    memory:
-      "I do not know exactly what I felt, but something inside me changed.",
-    hearts: 88,
-    stars: 52,
-  },
-];
-
 const feelingMeta: Record<Feeling, { className: string; short: string; image: string }> = {
   "Less alone": {
     className: "less-alone",
@@ -680,10 +585,7 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
     };
   }, []);
 
-  const allCapsules = useMemo(
-    () => (loadError ? sampleCapsules : communityCapsules),
-    [communityCapsules, loadError],
-  );
+  const allCapsules = communityCapsules;
   const capsules = useMemo(
     () =>
       allCapsules.filter((capsule) => {
@@ -742,7 +644,7 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
         {loading ? <p className="gallery-status">Loading community capsules...</p> : null}
         {loadError ? (
           <p className="gallery-status">
-            Community capsules could not be loaded yet. Showing sample capsules.
+            Community capsules could not be loaded yet. Please try again later.
           </p>
         ) : null}
         {!loading && !loadError && communityCapsules.length > 0 ? (
