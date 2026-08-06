@@ -680,7 +680,10 @@ function GalleryPage({ onNavigate }: { onNavigate: (route: Route, hash?: string)
     };
   }, []);
 
-  const allCapsules = useMemo(() => [...communityCapsules, ...sampleCapsules], [communityCapsules]);
+  const allCapsules = useMemo(
+    () => (loadError ? sampleCapsules : communityCapsules),
+    [communityCapsules, loadError],
+  );
   const capsules = useMemo(
     () =>
       allCapsules.filter((capsule) => {
