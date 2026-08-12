@@ -216,9 +216,8 @@ main,
   padding: 34px 14px 42px;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(3, 8, 20, 0.96) 0%, rgba(3, 8, 20, 0.82) 34%, rgba(3, 8, 20, 0.18) 72%),
-    linear-gradient(180deg, rgba(3, 8, 20, 0.18) 0%, rgba(3, 8, 20, 0.02) 52%, var(--bg-900) 100%),
-    url("/assets/hero-story-capsule.png") center bottom / cover no-repeat;
+    linear-gradient(120deg, rgba(3, 8, 20, 0.98) 0%, rgba(7, 17, 38, 0.94) 58%, rgba(16, 26, 58, 0.86) 100%),
+    linear-gradient(180deg, rgba(3, 8, 20, 0.18) 0%, rgba(3, 8, 20, 0.02) 52%, var(--bg-900) 100%);
   box-shadow: inset 0 -90px 90px var(--bg-900);
 }
 
@@ -230,10 +229,6 @@ main,
   margin: 0 auto 0 0;
   padding-top: 10px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.62);
-}
-
-.hero-art {
-  display: none;
 }
 
 .eyebrow {
@@ -528,7 +523,6 @@ legend span {
 .expo-card,
 .goods-card {
   display: grid;
-  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 18px;
 }
@@ -881,10 +875,9 @@ legend span {
 
 .capsule-card {
   display: grid;
-  grid-template-columns: 98px minmax(0, 1fr);
   gap: 14px;
-  min-height: 168px;
-  padding: 12px;
+  min-height: 0;
+  padding: 18px;
   border: 1px solid rgba(142, 203, 255, 0.23);
   border-radius: 8px;
   background:
@@ -949,59 +942,6 @@ legend span {
   display: grid;
   margin-top: 18px;
   place-items: center;
-}
-
-.crystal-wrap {
-  --core-a: #b9a7ff;
-  --core-b: #8ecbff;
-  --motif: #f0d9a2;
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 170px;
-  aspect-ratio: 0.38;
-  isolation: isolate;
-}
-
-.crystal-wrap.hero {
-  width: min(54vw, 250px);
-}
-
-.crystal-wrap.small {
-  width: 150px;
-}
-
-.crystal-wrap.card {
-  width: min(100%, 112px);
-  min-width: 92px;
-}
-
-.crystal-wrap.tiny {
-  width: 86px;
-}
-
-.crystal-aura {
-  position: absolute;
-  inset: 6% 2%;
-  z-index: -1;
-  border-radius: 46% 46% 18% 18%;
-  background:
-    radial-gradient(circle at 50% 80%, color-mix(in srgb, var(--motif), white 10%), transparent 20%),
-    radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--core-a), transparent 12%), transparent 52%);
-  filter: blur(20px);
-  opacity: 0.78;
-  animation: pulse 5s ease-in-out infinite;
-}
-
-.crystal-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 0 14px color-mix(in srgb, var(--core-a), transparent 42%))
-    drop-shadow(0 16px 18px rgba(0, 0, 0, 0.46));
-  user-select: none;
 }
 
 .less-alone {
@@ -1182,18 +1122,13 @@ legend span {
     min-height: 760px;
     padding: 72px max(40px, calc((100vw - 1180px) / 2)) 74px;
     background:
-      linear-gradient(90deg, rgba(3, 8, 20, 0.97) 0%, rgba(3, 8, 20, 0.8) 36%, rgba(3, 8, 20, 0.06) 73%),
-      linear-gradient(180deg, rgba(3, 8, 20, 0.08) 0%, rgba(3, 8, 20, 0) 58%, var(--bg-900) 100%),
-      url("/assets/hero-story-capsule.png") center 48% / cover no-repeat;
+      linear-gradient(120deg, rgba(3, 8, 20, 0.98) 0%, rgba(7, 17, 38, 0.94) 58%, rgba(16, 26, 58, 0.86) 100%),
+      linear-gradient(180deg, rgba(3, 8, 20, 0.08) 0%, rgba(3, 8, 20, 0) 58%, var(--bg-900) 100%);
   }
 
   .hero-copy {
     width: min(560px, 48vw);
     margin: 0;
-  }
-
-  .hero-art {
-    display: none;
   }
 
   h1 {
@@ -1232,7 +1167,7 @@ legend span {
   }
 
   .capsule-card {
-    grid-template-columns: 128px 1fr;
+    grid-template-columns: 1fr;
   }
 
   .footer {

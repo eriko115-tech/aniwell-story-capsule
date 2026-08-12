@@ -75,46 +75,30 @@ function getCapsuleMediaType(capsule: Capsule): MediaType {
   return "Anime";
 }
 
-const feelingMeta: Record<Feeling, { className: string; short: string; image: string }> = {
+const feelingMeta: Record<Feeling, { className: string }> = {
   "Less alone": {
     className: "less-alone",
-    short: "Lantern",
-    image: "/assets/capsules/capsule-less-alone.png",
   },
   "Seen / Understood": {
     className: "seen",
-    short: "Letter",
-    image: "/assets/capsules/capsule-seen.png",
   },
   Comforted: {
     className: "comforted",
-    short: "Moon",
-    image: "/assets/capsules/capsule-comforted.png",
   },
   Hopeful: {
     className: "hopeful",
-    short: "Rest",
-    image: "/assets/capsules/capsule-hopeful.png",
   },
   Brave: {
     className: "brave",
-    short: "Flame",
-    image: "/assets/capsules/capsule-brave.png",
   },
   Inspired: {
     className: "inspired",
-    short: "Feather",
-    image: "/assets/capsules/capsule-inspired.png",
   },
   "Ready to keep going": {
     className: "ready",
-    short: "Sprout",
-    image: "/assets/capsules/capsule-ready.png",
   },
   Other: {
     className: "other",
-    short: "Prism",
-    image: "/assets/capsules/capsule-other.png",
   },
 };
 
@@ -295,9 +279,6 @@ function MainPage({ onNavigate }: { onNavigate: (route: Route, hash?: string) =>
             </button>
           </div>
         </div>
-        <div className="hero-art" aria-label="Glowing crystal story capsule">
-          <CrystalCapsule feeling="Inspired" size="hero" />
-        </div>
       </section>
 
       <section className="section compact">
@@ -328,7 +309,6 @@ function MainPage({ onNavigate }: { onNavigate: (route: Route, hash?: string) =>
 
 function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) => void }) {
   const [submitted, setSubmitted] = useState(false);
-  const [submittedFeeling, setSubmittedFeeling] = useState<Feeling>("Other");
   const [selectedFeelings, setSelectedFeelings] = useState<Feeling[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -392,7 +372,6 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
         throw new Error(result.error || "Could not submit your story.");
       }
 
-      setSubmittedFeeling(selectedFeelings[0] ?? "Other");
       setSubmitted(true);
       setEmailNotice(
         result.emailSent
@@ -511,7 +490,6 @@ function StoryForm({ onNavigate }: { onNavigate: (route: Route, hash?: string) =
           </>
         ) : (
           <div className="thank-you">
-            <CrystalCapsule feeling={submittedFeeling} size="small" />
             <h2>Your capsule has been added.</h2>
             <p>Thank you for sharing a story that mattered to you.</p>
             {emailNotice ? <p className="privacy-note">{emailNotice}</p> : null}
@@ -681,7 +659,6 @@ function CapsuleCard({
 
   return (
     <article className="capsule-card">
-      <CrystalCapsule feeling={capsule.feeling} size="card" />
       <div>
         <div className="tag-row">
           <span className="media-tag">{mediaType}</span>
@@ -700,7 +677,6 @@ function GalleryTeaser({ onNavigate }: { onNavigate: (route: Route) => void }) {
   return (
     <section className="section compact">
       <GlassCard className="teaser-card">
-        <CrystalCapsule feeling="Comforted" size="tiny" />
         <div>
           <h2>Want to see what others have placed in their capsules?</h2>
           <button className="text-link" type="button" onClick={() => onNavigate("capsules")}>
@@ -768,11 +744,10 @@ function AnimeExpoCard() {
           <p className="eyebrow">Created for Anime Expo 2026</p>
           <h2>A Psychiatrist on Anime Culture: How Your Favorite Anime Could Save Your Life</h2>
           <p>July 5, 2:30 PM - 3:50 PM<br />Room 404AB</p>
-          <a className="text-link" href="#">
+        <a className="text-link" href="#">
             Learn more about the panel <span aria-hidden="true">-&gt;</span>
           </a>
         </div>
-        <CrystalCapsule feeling="Less alone" size="tiny" />
       </GlassCard>
     </section>
   );
@@ -891,7 +866,6 @@ function GoodsCTA() {
             </p>
           ) : null}
         </div>
-        <CrystalCapsule feeling="Other" size="tiny" />
       </GlassCard>
     </section>
   );
@@ -953,24 +927,6 @@ function GlassCard({
   children: ReactNode;
 }) {
   return <div className={`glass-card ${className}`}>{children}</div>;
-}
-
-function CrystalCapsule({
-  feeling,
-  size,
-}: {
-  feeling: Feeling;
-  size: "hero" | "small" | "card" | "tiny";
-}) {
-  const meta = feelingMeta[feeling];
-  const image = size === "hero" ? "/assets/capsules/capsule-hero-clean.png" : meta.image;
-
-  return (
-    <div className={`crystal-wrap ${size} ${meta.className}`} title={meta.short}>
-      <span className="crystal-aura" />
-      <img className="crystal-image" src={image} alt="" draggable="false" />
-    </div>
-  );
 }
 
 function StarField() {
