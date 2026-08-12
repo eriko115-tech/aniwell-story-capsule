@@ -267,11 +267,12 @@ function MainPage({ onNavigate }: { onNavigate: (route: Route, hash?: string) =>
           <p className="eyebrow">Created for Anime Expo 2026</p>
           <h1>Anime Story Capsule</h1>
           <p className="hero-subtitle">
-            Every fan has a story. Every story has a moment. And sometimes,
-            that moment changes a life.
+            Every story has its fans, and sometimes the characters gazing back at
+            you from its pages can change the way you see yourself.
           </p>
           <p>
-            What anime, manga, or game changed yours? Share your story with us.
+            What anime, manga, or game has had an impact on your life? Share your
+            story with us.
           </p>
           <div className="hero-actions">
             <button
@@ -716,7 +717,7 @@ function HowItWorks() {
     {
       number: "1",
       title: "Add Your Story",
-      body: "Share the anime story that moved you.",
+      body: "Share the fictional story that made a difference in your life.",
     },
     {
       number: "2",
@@ -730,8 +731,8 @@ function HowItWorks() {
     },
     {
       number: "4",
-      title: "Care for Yourself and Others",
-      body: "Together we build a kinder world.",
+      title: "Let a Shared Story Bring You Closer to Others",
+      body: "Together, we can set more kindness in motion.",
     },
   ];
 
